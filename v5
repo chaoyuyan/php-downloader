@@ -1,0 +1,13 @@
+<?php
+$url = 'https://dashu.txt'; // txt文件的URL地址
+
+// 判断缓存文件是否存在且未过期
+if (file_exists('cache.txt') && time() - filemtime('cache.txt') < 3600) {
+    $content = file_get_contents('cache.txt'); // 读取缓存文件的内容
+} else {
+    $content = file_get_contents($url); // 读取txt文件的内容
+    file_put_contents('cache.txt', $content); // 将内容写入缓存文件
+}
+
+echo '<div>' . $content . '</div>'; // 将内容显示在div中
+?>
