@@ -1,0 +1,61 @@
+
+<links>
+<div id="links"></div>
+
+<script>
+var xin = 'https://hi.chaoyuyan.com/free.txt';  
+var cacheFile = 'cache.txt';
+var xhr = new XMLHttpRequest();
+var wen;
+
+function displayWen() {  
+  if (wen) {  
+    document.getElementById('wen').innerHTML = wen;
+  }
+}
+
+if (window.File && window.FileReader && window.FileList && window.Blob && window.localStorage) {
+  if (localStorage.getItem(cacheFile) && Date.now() - localStorage.getItem(cacheFile + '_time') < 86400000) {
+    wen = localStorage.getItem(cacheFile);
+    displayWen();
+  } else {
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        wen = xhr.responseText;
+        localStorage.setItem(cacheFile, wen);
+        localStorage.setItem(cacheFile + '_time', Date.now());
+        displayWen();
+      }
+    };
+    xhr.open('GET', xin, true);
+    xhr.send();
+  }
+} else {
+  var cookieName = cacheFile + '=';
+  var cookieValue = '';
+  if (document.cookie.indexOf(cookieName) > -1) {
+    var startIndex = document.cookie.indexOf(cookieName) + cookieName.length;
+    var endIndex = document.cookie.indexOf(';', startIndex);
+    if (endIndex === -1) {
+      endIndex = document.cookie.length;
+    }
+    cookieValue = decodeURIComponent(document.cookie.substring(startIndex, endIndex));
+  }
+  if (cookieValue) { 
+    wen = cookieValue.split('_')[0];
+    displayWen();
+  } else {
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        wen = xhr.responseText;
+        var expires = new Date(Date.now() + 86400000).toUTCString();
+        document.cookie = cacheFile + '=' + encodeURIComponent(wen + '_' + Date.now()) + '; expires=' + expires + '; path=/';
+        displayWen();
+      }
+    };
+    xhr.open('GET', xin, true);
+    xhr.send();
+  }
+}
+</script>
+</links>
